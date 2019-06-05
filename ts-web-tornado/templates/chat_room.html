@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form onsubmit="return false;">
+    <h1 id="room_id">{{ r_id }}</h1>
+    <h1 id="user_id">{{ u_id }}</h1>
+    <input type="text" name="message" placeholder="发送消息"/>
+    <input type="button" value="Send" onclick="send(this.form.message.value)" />
+    <h3>Receive :</h3>
+    <div id="responseText" style="width:500px;height:300px;"></div>
+</form>
+<script type="text/javascript">
+    var socket;
+    if (!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    var roomId = document.getElementById('room_id').innerHTML;
+    var userId = document.getElementById('user_id').innerHTML;
+    if (window.WebSocket) {
+        var url = "ws://localhost:9090/chat_room_socket?room_id="+roomId;
+        socket = new WebSocket(url);
+        socket.onmessage = function(event) {
+            var ta = document.getElementById('responseText');
+            ta.innerHTML = ta.innerHTML + '<br/>' + event.data
+        };
+
+        socket.onopen = function(event) {
+            var ta = document.getElementById('responseText');
+            ta.value = "Web Socket opened!";
+        };
+
+        socket.onclose = function(event) {
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + "Web Socket closed";
+        };
+    } else {
+        alert("Your browser does not support Web Socket.");
+    }
+
+    function send(message) {
+        if (!window.WebSocket) { return; }
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send('{"room_id":"'+roomId+'","from_user":"'+userId+'","msg":"'+message+'"}');
+        } else {
+            alert("The socket is not open.");
+        }
+    }
+</script>
+</body>
+</html>

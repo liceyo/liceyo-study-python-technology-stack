@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}测试{% end %}</title>
+    <link rel="stylesheet" href="{{ static_url('style.css') }}">
+</head>
+<body>
+<div class="header">
+    {% block header %}{% end %}
+</div>
+<div class="body">
+    {% block body %}{% end %}
+</div>
+<div class="footer">
+    {% block footer %}{% end %}
+    <ul>
+        {% for book in books %}
+        <li>{{ book }}</li>
+        {% end %}
+    </ul>
+</div>
+</body>
+</html>
